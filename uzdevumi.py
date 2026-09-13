@@ -419,6 +419,9 @@ class Kresls(Inventars):
     def __init__(self, nosaukums, iegades_gads, _skaits=0):
         super().__init__(nosaukums, iegades_gads, _skaits)
 
+    def apraksts(self):
+        return f"{self.nosaukums} ({self.iegades_gads}), katram skolēnam savs."
+
 # 41. Realizē to kodā, izmantojot visus četrus OOP principus.
 
 
