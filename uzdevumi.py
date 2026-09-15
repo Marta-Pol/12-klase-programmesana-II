@@ -16,29 +16,37 @@
 
 # 4. daļa
 
+#I ain't green enough
+
 # 2. Uzraksti klasi Prece ar konstruktoru un divām metodēm — bez ieskatīšanās vecajā kodā.
+# class Prece:
+#     def __init__(self, nosaukums, cena, kategorija):
+#         self.nosaukums = nosaukums
+#         self.cena = cena
+#         self.kategorija = kategorija
 
-from sqlite3 import Date
-from traceback import StackSummary
+#     def info(self):
+#         return f"\"{self.nosaukums}\" ir prece kategorijā \"{self.kategorija}\", kura maksā {self.cena} eiro."
+
+#     def akcija(self, procenti):
+#         return round(self.cena * (1-(procenti/100)), 2)
 
 
-class Prece:
-    def __init__(self, nosaukums, cena, kategorija): # init -> initialize
-        self.nosaukums = nosaukums
-        self.cena = cena
-        self.kategorija = kategorija
+# bpk = Prece("Burvīgais piena kartupelis", 5.7, "piena produkti")
+# ssbb = Prece("Slavenā, slapjā beisbola bumba", 110.37, "sports")
+# mva = Prece("Maize: vienmēr akcijā!", 10, "maize un kondetorejas produkti")
 
-    def info(self):
-        return f"Preces nosaukums: {self.nosaukums}, cena: {self.cena}, kategorija: {self.kategorija}"
+# print(bpk.info(), f"Tagad tā maksā {bpk.akcija(20)} eiro ar 20% atlaidi!")
+# print(ssbb.info())
+# print(mva.info(), f"Tagad tā maksā {mva.akcija(80)} eiro ar 80% atlaidi!")
+#alt+shift+↓ = copy downwards
 
-    def akcija(self, procenti):
-        return self.cena - self.cena * (procenti / 100)
-
-# tomats = Prece("Tomāti", 3, "dārzeņi")
-# print(tomats.info())
-# print(tomats.akcija(30))
 
 # 3. ★ Pieraksti, ko tu no 11. klases OOP nesaproti līdz galam. To risināsim šajā blokā.
+
+
+
+
 
 # ----------------------------------------------------------
 # 12-002 · Klase, objekts, konstruktors
@@ -46,6 +54,7 @@ class Prece:
 
 # 4. Izveido klasi Rezervacija ar konstruktoru (vards, datums, vietu_skaits) un metodi
 #    apraksts().
+
 
 
 
@@ -128,9 +137,57 @@ class Prece:
 # 17. Izstrādā klasi Lidojums ar atribūtiem numurs, galamerkis, vietu_skaits,
 #    rezervetas_vietas. Visai validācijai jābūt klasē: numurs nedrīkst būt tukšs, vietu
 #    skaitam jābūt pozitīvam, rezervēto vietu skaits nedrīkst pārsniegt kopējo.
+class Lidojums:
+    def __init__(self, numurs, galamerkis, _rezervetas_vietas=0, vietu_skaits=100):
+        self.numurs = numurs
+        self.galamerkis = galamerkis
+        self.vietu_skaits = vietu_skaits
+        self._rezervetas_vietas = _rezervetas_vietas
+        self._aizpildijums = (self.rezervetas_vietas/self.vietu_skaits)*100
 
+    @property
+    def aizpildijums(self):
+        return self._aizpildijums
+    
+    @property
+    def rezervetas_vietas(self):
+        return self._rezervetas_vietas
+    @rezervetas_vietas.setter
+    def rezervetas_vietas(self, rezervets):
+        if rezervets > self.vietu_skaits:
+            raise ValueError("Rezerveto vietu skaits nevar būt lielāks par vietu skaitu.")
+        else:
+            self._rezervetas_vietas = rezervets
+    @property
+    def numurs(self):
+        return self.numurs
+    @numurs.setter
+    def numurs(self, num):
+        if num <= 0:
+            raise ValueError("Numurs nevar būt mazāks par 1.")
+    def rezervet(self, skaits):
+        self.rezervetas_vietas += skaits
 
+    def atcelt(self, skaits):
+        self.rezervetas_vietas -= skaits
 
+    def brivas_vietas(self):
+        return self.vietu_skaits - self.rezervetas_vietas
+    
+    
+    @classmethod
+    def no_rindas(cls, rinda):
+        """Izveido objektu no CSV rindas: BT101,Riga,180"""
+        lauki = rinda.strip().split(",")
+        return cls(lauki[0], lauki[1], int(lauki[2]))
+
+    @classmethod
+    def tuksa(cls):
+        """Izveido tukšu lidojumu ar noklusējuma vērtībām."""
+        return cls("---", "nav noteikts")
+
+# lid = Lidojums(1, "France", 10, 40)
+# print(lid.aizpildijums)
 
 # 18. Pievieno metodes rezervet(skaits), atcelt(skaits) un brivas_vietas().
 
@@ -175,7 +232,6 @@ class Prece:
 # ----------------------------------------------------------
 
 # 24. Izveido virsklasi Transportlidzeklis un apakšklases Automasina un Velosipeds.
-
 class Transportlidzeklis:
     def __init__(self, marka, gads):
         self.marka = marka
@@ -185,21 +241,29 @@ class Transportlidzeklis:
         return f"{self.marka} ({self.gads})"
 
     def parvietojas(self):
-        return "parvietojas"
-
+        return "pārvietojas"
 
 class Automasina(Transportlidzeklis):
-    def __init__(self, marka, gads, degviela):
-        super().__init__(marka, gads)      # virsklases konstruktors
-        self.degviela = degviela
+    def __init__(self, marka, gads, tips):
+        super().__init__(marka, gads)
+        self.tips = tips
 
-    def parvietojas(self):                 # pārraksta virsklases metodi
-        return "brauc pa celu"
-
+    def parvietojas(self):
+        return "brauc pa ceļu"
 
 class Velosipeds(Transportlidzeklis):
     def parvietojas(self):
-        return "brauc ar kajam"
+        return "brauc ar kājām"
+
+class Unicikls(Transportlidzeklis):
+    def __init__(self, marka, gads, tophats=1):
+        super().__init__(marka, gads)
+        self.tophats = tophats
+
+    def parvietojas(self):
+        return "brauc izsmalcināti"
+
+
 
 # 25. Katrai apakšklasei pievieno savu metodi un pārrakstītu virsklases metodi.
 
@@ -207,17 +271,21 @@ class Velosipeds(Transportlidzeklis):
 
 
 # 26. Izveido objektu sarakstu ar dažādu apakšklašu objektiem un apstaigā to ar ciklu.
+# deer = Automasina("Burguntruck", 2023, "benzīns")
+# mick = Unicikls("One", 1816, 180)
+# divi = Velosipeds("Twowheezer", 2)
+# da = Transportlidzeklis("Okarun", 16)
 
-# a = Transportlidzeklis("Bolt Skūteris", "2025")
-# b = Automasina("Porsche", "2000", "dīzelis")
-# c = Velosipeds("Cube", "2018")
+# list = [deer, divi, mick, da]
 
-# saraksts = [a, b, c]
+# for l in list:
+#     print(l.apraksts() + ", ar to " + l.parvietojas())
 
-# for t in saraksts:
-#     print(t.parvietojas())
+
 
 # 27. ★ Izveido trīs līmeņu hierarhiju un pieraksti, kāpēc tā parasti ir slikta ideja.
+
+
 
 
 
@@ -226,54 +294,70 @@ class Velosipeds(Transportlidzeklis):
 # ----------------------------------------------------------
 
 # 28. Izveido klases Kvadrats, Rinkis, Trijsturis, katrai ar metodi laukums().
+# class Kvadrats:
+#     def __init__(self, mala):
+#         self.mala = mala
 
-class Kvadrats:
-    def __init__(self, mala):
-        self.a = mala
+#     def laukums(self):
+#         return (self.mala*self.mala)
 
-    def laukums(self):
-        return self.a ** 2
+# class Rinkis:
+#     def __init__(self, r):
+#         self.r = r
 
-class Rinkis:
-    def __init__(self, radiuss):
-        self.r = radiuss
+#     def laukums(self):
+#         return (3.14159265359*(self.r**2))
 
-    def laukums(self):
-        return round(3.14159265 * self.r ** 2, 2)
+# class Trijsturis:
+#     def __init__(self, pamats, augstums):
+#         self.pamats = pamats
+#         self.augstums = augstums
 
-class Trijsturis:
-    def __init__(self, pamats, augstums):
-        self.a = pamats
-        self.h = augstums
+#     def laukums(self):
+#         return (self.pamats * self.augstums)/2
+        
+# class Oktagons:
+#     def __init__(self, mala):
+#         self.mala = mala
 
-    def laukums(self):
-        return round((self.a * self.h) / 2, 2)
+#     def laukums(self):
+#         return 2*(1+(2**0.5))*(self.mala**2)
+
 
 # 29. Uzraksti funkciju, kas saņem figūru sarakstu un atgriež kopējo laukumu.
+# sq = Kvadrats(5)
+# cir = Rinkis(6)
+# tri = Trijsturis(6, 5)
+# hajime = Oktagons(7)
 
-def laukumu_summa(saraksts):
-    summa = 0
+# def kopejs_s(figuras):
+#     # return sum(figura.laukums() for figura in figuras)
+#     sum = 0
+#     for f in figuras:
+#         sum += f.laukums()
+#     return sum
 
-    for figura in saraksts:
-        summa += figura.laukums()
-
-    return summa
-
-kv = Kvadrats(4)
-tr = Trijsturis(7, 3)
-ri = Rinkis(6)
-
-sar = [kv, tr, ri]
-print(laukumu_summa(sar))
-
+# shaps = [sq, cir, tri, hajime]
+# print(kopejs_s(shaps))
 # 30. Papildini programmu ar jaunu figūru, nemainot funkciju.
+
+
 
 
 # 31. Pieraksti, kāpēc 30. uzdevumā funkcija nebija jāmaina — tā ir polimorfisma jēga.
 
 
+
+
 # 32. ★ Uzraksti funkciju, kas darbojas ar jebkuru objektu, kuram ir metode apraksts(),
 #    neatkarīgi no klases.
+
+def turbo(obj):
+    if "Okarun" in obj.apraksts():
+        return True
+    else:
+        return False
+
 
 
 # ----------------------------------------------------------
@@ -281,35 +365,64 @@ print(laukumu_summa(sar))
 # ----------------------------------------------------------
 
 # 33. Pārveido Figura par abstraktu klasi ar abstraktu metodi laukums().
+
 from abc import ABC, abstractmethod
 
-class Figura(ABC): # Abstract Base Class
+class Figura(ABC):
     def __init__(self, nosaukums):
         self.nosaukums = nosaukums
 
     @abstractmethod
     def laukums(self):
-        """Katrai figūrai savs aprēķins."""
+        """Katram savs laukuma aprēķins"""
 
     def apraksts(self):
         return f"{self.nosaukums}: {self.laukums():.2f}"
-
-
-# 34. Pārbaudi, kas notiek, mēģinot izveidot abstraktās klases objektu.
-
-# fig = Figura() # nestrādā
-
-# 35. Pārbaudi, kas notiek, ja apakšklase abstrakto metodi nerealizē.
 
 class Kvadrats(Figura):
     def __init__(self, mala):
         super().__init__("kvadrats")
         self.mala = mala
 
-# k = Kvadrats(9)
+    def laukums(self):
+        return (self.mala*self.mala)
+
+class Rinkis(Figura):
+    def __init__(self, r):
+        super().__init__("riņķis")
+        self.r = r
+
+    def laukums(self):
+        return (3.14159265359*(self.r**2))
+
+# square = Kvadrats(5)
+# aple = Rinkis(6)
+# print(f"{square.apraksts()}\n{aple.apraksts()}")
+
+# 34. Pārbaudi, kas notiek, mēģinot izveidot abstraktās klases objektu.
+
+# fig = Figura("johg") # DON'T WORK!!!!!
+
+
+
+# 35. Pārbaudi, kas notiek, ja apakšklase abstrakto metodi nerealizē.
+
+# uznāk error!!
+# class Oktagons(Figura):
+#     def __init__(self, mala):
+#         super().__init__("hajime")
+#         self.mala = mala
+
+# ha = Oktagons(4)
+#TypeError: Can't instantiate abstract class Oktagons with abstract method laukums
+
 
 # 36. ★ Pieraksti, ar ko abstrakcija atšķiras no iekapsulēšanas. Eksāmenā šie jēdzieni ir
 #    jāatšķir.
+
+#abstrakcija ierobežo, kādām metodēm jābūt apakšklasēm, iekapsulēšanā tur datus un darbības kopā
+
+
 
 # ----------------------------------------------------------
 # 12-010 · Praktikums: četri principi
@@ -317,76 +430,113 @@ class Kvadrats(Figura):
 
 # 37. Izstrādā bibliotēkas sistēmas klases: abstrakta Vienums ar apakšklasēm Gramata,
 #    Zurnals, DVD. Katrai sava apraksts() un izsniegsanas_termins().
-from datetime import datetime, timedelta
+# from datetime import datetime, timedelta
+# class Vienums(ABC):
+#     def __init__(self, nosaukums, gads, _izsniegsanas_reizes = 0, izsniegsana = 0):
+#         self.nosaukums = nosaukums
+#         self.gads = gads
+#         self.sanemts = datetime.now()
+#         self._izsniegsana = izsniegsana
+#         self._izsniegsanas_reizes = _izsniegsanas_reizes
 
-class Vienums(ABC):
-    def __init__(self, nosaukums, _izsniegts=0):
-        self.nosaukums = nosaukums
-        self.sanemts = datetime.now()
-        self.izsniegts = _izsniegts
+#     @property
+#     def izsniegsana(self):
+#         return f"Vienums ir izsniegts {self._izsniegsana} reizes."
 
-    @property
-    def izsniegts(self):
-        return self._izsniegts
+#     @izsniegsana.setter
+#     def izsniegsana(self, reizes):
+#         if reizes < 0:
+#             raise ValueError("Vienums nevar būt izsniegts mazāk par nevienu reizi.")
+#         self._izsniegsana = reizes
+#         self.izsniegsanas_reizes += 1
+#     @property
+#     def izsniegsanas_reizes(self):
+#         return self.izsniegsanas_reizes
+#     @abstractmethod
+#     def apraksts(self):
+#         """apraksti pats omfg"""
+    
+#     def izsniegsanas_termins(self):
+#         return (self.sanemts + timedelta(weeks=4))
 
-    @izsniegts.setter
-    def izsniegts(self, value):
-        if value < 0:
-            raise ValueError("Izsniegto vienumu skaits nevar būt negatīvs.")
-        self._izsniegts = value
+       
+# class Gramata(Vienums):
+#     def __init__(self, nosaukums, gads, autors):
+#         super().__init__(nosaukums, gads)
+#         self.autors = autors
+
+#     def apraksts(self):
+#         return f"\"{self.nosaukums}\" ir {self.gads}. gada grāmata, kuru uzrakstīja {self.autors}."
+
+# class Zurnals(Vienums):
+#     def __init__(self, nosaukums, gads, redaktors):
+#         super().__init__(nosaukums, gads)
+#         self.redaktors = redaktors
+
+#     def apraksts(self):
+#         return f"\"{self.nosaukums}\" ir žurnāls, kurš izdots {self.gads}. gadā. Tā redaktors/-e ir {self.redaktors}."
+
+# class DVD(Vienums):
+#     def __init__(self, nosaukums, gads, garums, rezisors):
+#         super().__init__(nosaukums, gads)
+#         self.garums = garums
+#         self.rezisors = rezisors
+
+#     def apraksts(self):
+#         return f"\"{self.nosaukums}\" ir veidots {self.gads}. gadā, režisors - {self.rezisors}. DVD ir {self.garums}h garš."
+
+# ca = Gramata("Old Possum's Book of Practical Cats", 1939, "T.S. Eliot")
+# catsstage = DVD("CATS", 1998, 2, "David Mallet")
+# zur = Zurnals("Cats - What ARE They????", 2026, "Varik")
+# # 38. Uzraksti funkciju, kas apstaigā vienumu sarakstu un izvada visu aprakstus.
+# vienumi = [ca, catsstage, zur]
+
+# def desc(list):
+#     for vien in vienumi:
+#         print(vien.apraksts())
+
+# desc(vienumi)
+
+# print(ca.izsniegsanas_termins())
+
+# 39. ★ Pievieno iekapsulētu skaitītāju, cik reižu vienums izsniegts.
+
+# FV 1!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+class Maksajums(ABC):
+    def __init__(self, vajag, dota):
+        self.vajag = vajag
+        self.dota = dota
+        self.atlikums = vajag - dota
+
     @abstractmethod
-    def apraksts(self):
-        """Katrai mantojošai klasei būs atšķirīgi aprakstošie dati"""
+    def komisija(self):
+        """aprēķini pats..."""
 
-    def izsniegsanas_termins(self):
-        return self.sanemts + timedelta(days=14)
+class KartesMaksajums(Maksajums):
+    def __init__(self, vajag, dota):
+        super().__init__(vajag, dota)
 
-class Gramata(Vienums):
-    def __init__(self, nosaukums, autors, lpp):
-        super().__init__(nosaukums)
-        self.autors = autors
-        self.lpp = lpp
+    def komisija(self):
+        return round(self.vajag * 0.015, 2)
 
-    def apraksts(self):
-        return f"{self.nosaukums} ({self.autors}, {self.lpp} lpp.)"
+class SkaidraNauda(Maksajums):
+    def __init__(self, vajag, dota):
+        super().__init__(vajag, dota)
 
-class DVD(Vienums):
-    def __init__(self, nosaukums, gads, rezisors):
-        super().__init__(nosaukums)
-        self.gads = gads
-        self.rezisors = rezisors
+    def komisija(self):
+        return 0
 
-    def apraksts(self):
-        return f"{self.rezisors} - {self.nosaukums} ({self.gads})"
+def kopeja_komisija(maksajumi):
+    kops = 0
+    for maksajums in maksajumi:
+        kops += maksajums.komisija()
 
-    def izsniegsanas_termins(self):
-        return self.sanemts + timedelta(days=5)
+    return kops
 
-class Zurnals(Vienums):
-    def __init__(self, nosaukums, periods, gads):
-        super().__init__(nosaukums)
-        self.periods = periods
-        self.gads = gads
-
-    def apraksts(self):
-        return f"{self.nosaukums} ({self.gads}. gada {self.periods})"
-
-g = Gramata("Uguns un nakts", "Rainis", 132)
-m = DVD("The Odyssey", 2026, "C. Nolan")
-z = Zurnals("Pie galda!", "jūlijs-augusts", 2026)
-
-
-# 38. Uzraksti funkciju, kas apstaigā vienumu sarakstu un izvada visu aprakstus.
-
-
-for vienums in [g, m, z]:
-    print(vienums.apraksts())
-
-
-# 39. ★ Pievieno iekapsulētu skaitītāju, cik reižu vienums izsniegts. 
-#       Izstrādāt funkcionalitāti, kas seko līdzi isniegšanai un saņemšanai.
-
-
+mak = KartesMaksajums(25.05, 30)
+wue = SkaidraNauda(55.5, 100)
+pur = [mak, wue]
+print(kopeja_komisija(pur))
 
 # ----------------------------------------------------------
 # 12-011 · Sprints: klašu hierarhija
@@ -394,7 +544,6 @@ for vienums in [g, m, z]:
 
 # 40. Dotajam aprakstam «skolas inventāra uzskaite» izprojektē klašu hierarhiju: kas ir
 #    virsklase, kas apakšklases, kas abstrakts.
-
 class Inventars(ABC):
     def __init__(self, nosaukums, iegades_gads, _skaits=0):
         self.nosaukums = nosaukums
@@ -416,9 +565,43 @@ class Inventars(ABC):
         """Katrai mantojošai klasei būs atšķirīgi aprakstošie dati"""
 
 class Kresls(Inventars):
-    def __init__(self, nosaukums, iegades_gads, _skaits=0):
+    def __init__(self, nosaukums, iegades_gads, _legs, _skaits=0):
         super().__init__(nosaukums, iegades_gads, _skaits)
+        self._legs =_legs
 
+    def klase_vel(self, klases):
+        needed = klases*31
+        if needed > self._skaits:
+            return needed - self._skaits
+        else:
+            return 0
+
+    @property
+    def legs(self):
+        return self._skaits
+
+    @legs.setter
+    def legs(self, value):
+        if value < 0:
+            raise ValueError("Skaits nevar būt negatīvs.")
+        self._legs = value
+
+    def apraksts(self):
+        return "Sēdi."
+    
+class Gramata(Inventars):
+    def __init__(self, nosaukums, iegades_gads, lpp, _skaits=0):
+        super().__init__(nosaukums, iegades_gads, _skaits)
+        self.lpp = lpp
+
+    def klase_vel(self, klases):
+            needed = klases*95
+            if needed > self._skaits + 5:
+                return needed - self._skaits
+            else:
+                return 5
+    def apraksts(self):
+        return "Lasi."
 # 41. Realizē to kodā, izmantojot visus četrus OOP principus.
 
 
