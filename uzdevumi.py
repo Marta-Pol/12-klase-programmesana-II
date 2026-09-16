@@ -562,7 +562,7 @@ class Inventars(ABC):
     
     @abstractmethod
     def apraksts(self):
-        """Katrai mantojošai klasei būs atšķirīgi aprakstošie dati"""
+        """EVERY MAN FOR HIMSELF!!"""
 
 class Kresls(Inventars):
     def __init__(self, nosaukums, iegades_gads, _legs, _skaits=0):
@@ -590,9 +590,9 @@ class Kresls(Inventars):
         return "Sēdi."
     
 class Gramata(Inventars):
-    def __init__(self, nosaukums, iegades_gads, lpp, _skaits=0):
+    def __init__(self, nosaukums, iegades_gads, _lpp, _skaits=0):
         super().__init__(nosaukums, iegades_gads, _skaits)
-        self.lpp = lpp
+        self._lpp = _lpp
 
     def klase_vel(self, klases):
             needed = klases*95
@@ -600,9 +600,20 @@ class Gramata(Inventars):
                 return needed - self._skaits
             else:
                 return 5
+    @property
+    def lpp(self):
+        return self._lpp
+    @property
+    def skaits(self):
+        return self._skaits
+    @skaits.setter
+    def skaits(self, sk):
+        self._skaits = sk
     def apraksts(self):
         return "Lasi."
+
 # 41. Realizē to kodā, izmantojot visus četrus OOP principus.
+
 
 
 
@@ -643,8 +654,17 @@ class Gramata(Inventars):
 # ----------------------------------------------------------
 
 # 47. Ar collections.Counter saskaiti burtu biežumu un salīdzini ar savu ciklu.
+# from collections import Counter
+# text = input("--> ")
+# print(Counter(text))
+# # letters = {}
+# for t in text.lower():
+#     if t in letters.keys():
+#         letters[t] += 1
+#     else:
+#         letters[t] = 1
 
-
+# print(letters)
 
 
 # 48. Ar collections.defaultdict pārraksti grupēšanas uzdevumu.
@@ -653,6 +673,35 @@ class Gramata(Inventars):
 
 
 # 49. Ar pathlib uzraksti programmu, kas uzskaita visas .py datnes katalogā.
+from pathlib import Path
+# for datne in Path("./01-oop-un-bibliotekas/uzdevumi.py").glob("*.py"):
+#     print(datne.name, datne.stat().st_size)
+ue = Path(".")
+folders = []
+# for dir in ue.iterdir():
+    # d = dir
+    # while d.is_dir() == True:
+    #     for fil in d.iterdir():
+    #         if fil.is_dir() == False:
+    #             files.append(fil)
+    #             break
+    #         else: 
+    #             folders.append(fil)
+    #             d = fil
+    #             break
+    #     break
+def getAllFiles(path):
+    files = []
+    for directory in path.iterdir():
+        if directory.is_dir() and ".git" not in directory.stem:
+            files += getAllFiles(directory)
+        else:
+            files.append(directory)
+    return files
+
+for  file in getAllFiles(ue):
+    print(file)
+
 
 
 
