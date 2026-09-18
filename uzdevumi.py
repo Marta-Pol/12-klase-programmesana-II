@@ -679,7 +679,7 @@ class Gramata(Inventars):
 from pathlib import Path
 # for datne in Path("./01-oop-un-bibliotekas/uzdevumi.py").glob("*.py"):
 #     print(datne.name, datne.stat().st_size)
-ue = Path(".")
+ue = Path("../../")
 folders = []
 # for dir in ue.iterdir():
     # d = dir
