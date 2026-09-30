@@ -56,6 +56,21 @@
 #    apraksts().
 
 
+class Rezervacija:
+    def __init__(self, vards, datums, vietu_skaits=1):
+        self.vards = vards
+        self.datums = datums
+        self.vietu_skaits = vietu_skaits
+
+    def apraksts(self):
+        return f"{self.vards} — {self.datums}, {self.vietu_skaits} vietas"
+
+    def mainit_vietas(self, jauns_skaits):
+        if jauns_skaits < 1:
+            return False
+        self.vietu_skaits = jauns_skaits
+        return True
+
 
 
 # 5. Izveido trīs objektus un izvadi to aprakstus.
@@ -137,54 +152,68 @@
 # 17. Izstrādā klasi Lidojums ar atribūtiem numurs, galamerkis, vietu_skaits,
 #    rezervetas_vietas. Visai validācijai jābūt klasē: numurs nedrīkst būt tukšs, vietu
 #    skaitam jābūt pozitīvam, rezervēto vietu skaits nedrīkst pārsniegt kopējo.
-class Lidojums:
-    def __init__(self, numurs, galamerkis, _rezervetas_vietas=0, vietu_skaits=100):
-        self.numurs = numurs
-        self.galamerkis = galamerkis
-        self.vietu_skaits = vietu_skaits
-        self._rezervetas_vietas = _rezervetas_vietas
-        self._aizpildijums = (self.rezervetas_vietas/self.vietu_skaits)*100
+# class NepietiekVietuError(Exception):
+#     """Met, ja pieprasīts vairāk vietu, nekā ir brīvu."""
+# class Lidojums:
+#     def __init__(self, numurs, galamerkis, _rezervetas_vietas=0, vietu_skaits=100):
+#         self.numurs = numurs
+#         self.galamerkis = galamerkis
+#         self.vietu_skaits = vietu_skaits
+#         self._rezervetas_vietas = _rezervetas_vietas
+#         self._aizpildijums = (self.rezervetas_vietas/self.vietu_skaits)*100
 
-    @property
-    def aizpildijums(self):
-        return self._aizpildijums
+#     @property
+#     def aizpildijums(self):
+#         return self._aizpildijums
     
-    @property
-    def rezervetas_vietas(self):
-        return self._rezervetas_vietas
-    @rezervetas_vietas.setter
-    def rezervetas_vietas(self, rezervets):
-        if rezervets > self.vietu_skaits:
-            raise ValueError("Rezerveto vietu skaits nevar būt lielāks par vietu skaitu.")
-        else:
-            self._rezervetas_vietas = rezervets
-    @property
-    def numurs(self):
-        return self.numurs
-    @numurs.setter
-    def numurs(self, num):
-        if num <= 0:
-            raise ValueError("Numurs nevar būt mazāks par 1.")
-    def rezervet(self, skaits):
-        self.rezervetas_vietas += skaits
+#     @property
+#     def rezervetas_vietas(self):
+#         return self._rezervetas_vietas
+#     @rezervetas_vietas.setter
+#     def rezervetas_vietas(self, rezervets):
+#         if rezervets > self.vietu_skaits:
+#             raise ValueError("Rezerveto vietu skaits nevar būt lielāks par vietu skaitu.")
+#         else:
+#             self._rezervetas_vietas = rezervets
+#     # @property
+#     # def numurs(self):
+#     #     return self.numurs
+#     # @numurs.setter
+#     # def numurs(self, num):
+#         # if num <= 0:
+#         #     raise ValueError("Numurs nevar būt mazāks par 1.")
+#     def rezervet(self, skaits):
+#         if skaits > self.brivas_vietas():
+#             raise NepietiekVietuError(
+#                 f"Brivas tikai {self.brivas_vietas()} vietas")
+#         self.rezervetas += skaits
+            
 
-    def atcelt(self, skaits):
-        self.rezervetas_vietas -= skaits
+#     def atcelt(self, skaits):
+#         if self.rezervetas_vietas - skaits > 0:
+#             print(self.rezervetas_vietas - skaits)
+#             self.rezervetas_vietas -= skaits
 
-    def brivas_vietas(self):
-        return self.vietu_skaits - self.rezervetas_vietas
+#     def brivas_vietas(self):
+#         return self.vietu_skaits - self.rezervetas_vietas
+#     def uz_vardnicu(self):
+#         return {"numurs": self.numurs, "galamerkis": self.galamerkis, "rezervetas_vietas": self.rezervetas_vietas, "vietu_skaits": self.vietu_skaits, "brivas_vietas": self.brivas_vietas()}
+    
+#     @classmethod
+#     def no_vardnicas(cls, dati):
+#         return cls(dati["numurs"], dati["galamerkis"], dati["rezervetas_vietas"], dati["vietu_skaits"])
     
     
-    @classmethod
-    def no_rindas(cls, rinda):
-        """Izveido objektu no CSV rindas: BT101,Riga,180"""
-        lauki = rinda.strip().split(",")
-        return cls(lauki[0], lauki[1], int(lauki[2]))
+#     @classmethod
+#     def no_rindas(cls, rinda):
+#         """Izveido objektu no CSV rindas: BT101,Riga,180"""
+#         lauki = rinda.strip().split(",")
+#         return cls(lauki[0], lauki[1], int(lauki[2]))
 
-    @classmethod
-    def tuksa(cls):
-        """Izveido tukšu lidojumu ar noklusējuma vērtībām."""
-        return cls("---", "nav noteikts")
+#     @classmethod
+#     def tuksa(cls):
+#         """Izveido tukšu lidojumu ar noklusējuma vērtībām."""
+#         return cls("---", "nav noteikts")
 
 # lid = Lidojums(1, "France", 10, 40)
 # print(lid.aizpildijums)
@@ -533,10 +562,10 @@ def kopeja_komisija(maksajumi):
 
     return kops
 
-mak = KartesMaksajums(25.05, 30)
-wue = SkaidraNauda(55.5, 100)
-pur = [mak, wue]
-print(kopeja_komisija(pur))
+# mak = KartesMaksajums(25.05, 30)
+# wue = SkaidraNauda(55.5, 100)
+# pur = [mak, wue]
+# print(kopeja_komisija(pur))
 
 # ----------------------------------------------------------
 # 12-011 · Sprints: klašu hierarhija
@@ -612,9 +641,6 @@ class Gramata(Inventars):
     def apraksts(self):
         return "Lasi."
 
-    def apraksts(self):
-        return f"{self.nosaukums} ({self.iegades_gads}), katram skolēnam savs."
-
 # 41. Realizē to kodā, izmantojot visus četrus OOP principus.
 
 
@@ -679,8 +705,8 @@ class Gramata(Inventars):
 from pathlib import Path
 # for datne in Path("./01-oop-un-bibliotekas/uzdevumi.py").glob("*.py"):
 #     print(datne.name, datne.stat().st_size)
-ue = Path("../../")
-folders = []
+# ue = Path(".")
+# folders = []
 # for dir in ue.iterdir():
     # d = dir
     # while d.is_dir() == True:
@@ -693,17 +719,17 @@ folders = []
     #             d = fil
     #             break
     #     break
-def getAllFiles(path):
-    files = []
-    for directory in path.iterdir():
-        if directory.is_dir() and ".git" not in directory.stem:
-            files += getAllFiles(directory)
-        else:
-            files.append(directory)
-    return files
+# def getAllFiles(path):
+#     files = []
+#     for directory in path.iterdir():
+#         if directory.is_dir() and ".git" not in directory.stem:
+#             files += getAllFiles(directory)
+#         else:
+#             files.append(directory)
+#     return files
 
-for  file in getAllFiles(ue):
-    print(file)
+# for  file in getAllFiles(ue):
+#     print(file)
 
 
 
@@ -750,8 +776,63 @@ for  file in getAllFiles(ue):
 # ----------------------------------------------------------
 
 # 56. Izveido logu ar virsrakstu, vienu ievades lauku un pogu.
+import tkinter as tk
+from tkinter import *
 
-
+# logs = tk.Tk()
+# logs.title("Silvis Tundra")
+# logs.geometry('500x500')
+# court_record = []
+# reservations = []
+# intro = tk.Label(logs, text="Viper Forrest Court Record")
+# intro.pack()
+# entry = tk.Entry(logs)
+# entry.pack()
+# options = Menubutton(logs, text = "meow")
+# options.menu = Menu (options,tearoff=0)
+# options["menu"] = options.menu 
+# cVar = IntVar() 
+# aVar = IntVar() 
+# options.menu.add_checkbutton ( label ='Silvis', variable = cVar ) 
+# options.menu.add_checkbutton ( label = 'Nimay', variable = aVar ) 
+# options.pack() 
+# def entry_commit():
+#     x = entry.get()
+#     try:
+#         crtext.set(f"do better. {int(x)} as evidence doesn't make any sense.")   
+#     except:
+#         if len(x) > 2:
+#             court_record.append(x)
+#             crtext.set(f"Court Record: {court_record}")
+        
+#     entry.delete(0, tk.END)
+# def reservation():
+#     x = reserveEntry.get()
+#     splitx = x.split(",")
+#     sett = ""
+#     try:
+#         reservations.append(Rezervacija(splitx[0], splitx[1], splitx[2]))
+#     except:
+#         reservations.append(Rezervacija(splitx[0], splitx[1]))
+#     for r in reservations:
+#         sett += r.apraksts() + ', '
+#     rtext.set(sett)
+#     reserveEntry.delete(0, tk.END)
+# button = tk.Button(logs, text="Commit to Court Record", command=entry_commit, background="#7bc98f", activebackground="#cfa93e")
+# button.pack()
+# crtext = StringVar()
+# c_r= tk.Label(logs, textvariable = crtext)
+# c_r.pack()
+# rez = tk.Label(logs, text="maybe you wanna make a reservation too idk")
+# rez.pack()
+# reserveEntry = tk.Entry(logs)
+# reserveEntry.pack()
+# reserve = tk.Button(logs, text="reserve", command=reservation, background="#7bc98f", activebackground="#cfa93e")
+# reserve.pack()
+# rtext = StringVar()
+# re= tk.Label(logs, textvariable = rtext)
+# re.pack()
+# logs.mainloop()
 
 
 # 57. Pievieno otru lauku un sakārto elementus režģī.
@@ -775,10 +856,24 @@ for  file in getAllFiles(ue):
 # ----------------------------------------------------------
 
 # 60. Panāc, lai poga nolasa ievadi un izvada rezultātu logā.
-
-
-
-
+# import copy
+# logs = tk.Tk()
+# logs.title("Ievadi.")
+# logs.geometry('500x500')
+# intro = tk.Label(logs, text="Ievadi.")
+# intro.pack()
+# entry = tk.Entry(logs)
+# entry.pack()
+# def result():
+#     x = entry.get()
+#     if x
+#     entry.delete(0, tk.END)
+# button = tk.Button(logs, text="result", command=result, background="#eafff0", activebackground="#c1e9cb")
+# button.pack()
+# crtext = StringVar()
+# c_r= tk.Label(logs, textvariable = crtext)
+# c_r.pack()
+# logs.mainloop()
 # 61. Pievieno validāciju: nederīgas ievades gadījumā parādi paziņojumu, nevis avarē.
 
 
@@ -801,8 +896,147 @@ for  file in getAllFiles(ue):
 
 # 64. Izveido grafisku saskarni savai 12-005 klasei Lidojums: rezervēšana, atcelšana,
 #    brīvo vietu rādīšana.
+class NepietiekVietuError(Exception):
+    """Met, ja pieprasīts vairāk vietu, nekā ir brīvu."""
+class Lidojums:
+    def __init__(self, numurs, galamerkis, _rezervetas_vietas=0, vietu_skaits=100):
+        self.numurs = numurs
+        self.galamerkis = galamerkis
+        self.vietu_skaits = vietu_skaits
+        self._rezervetas_vietas = _rezervetas_vietas
+        self._aizpildijums = (self.rezervetas_vietas/self.vietu_skaits)*100
+
+    @property
+    def aizpildijums(self):
+        return self._aizpildijums
+    
+    @property
+    def rezervetas_vietas(self):
+        return self._rezervetas_vietas
+    @rezervetas_vietas.setter
+    def rezervetas_vietas(self, rezervets):
+        if rezervets > self.vietu_skaits:
+            raise ValueError("Rezerveto vietu skaits nevar būt lielāks par vietu skaitu.")
+        else:
+            self._rezervetas_vietas = rezervets
+    # @property
+    # def numurs(self):
+    #     return self.numurs
+    # @numurs.setter
+    # def numurs(self, num):
+        # if num <= 0:
+        #     raise ValueError("Numurs nevar būt mazāks par 1.")
+    def rezervet(self, skaits):
+        if skaits > self.brivas_vietas():
+            raise NepietiekVietuError(
+                f"Brivas tikai {self.brivas_vietas()} vietas")
+        self.rezervetas_vietas += skaits
+            
+
+    def atcelt(self, skaits):
+        if self.rezervetas_vietas - skaits < 0:
+            raise NepietiekVietuError(
+                f"Aizņemtas tikai {self.rezervetas_vietas} vietas"
+            )
+        self.rezervetas_vietas -= skaits
+
+    def brivas_vietas(self):
+        return self.vietu_skaits - self.rezervetas_vietas
+    def uz_vardnicu(self):
+        return {"numurs": self.numurs, "galamerkis": self.galamerkis, "rezervetas_vietas": self.rezervetas_vietas, "vietu_skaits": self.vietu_skaits, "brivas_vietas": self.brivas_vietas()}
+    
+    @classmethod
+    def no_vardnicas(cls, dati):
+        return cls(dati["numurs"], dati["galamerkis"], dati["rezervetas_vietas"], dati["vietu_skaits"])
+    
+    
+    @classmethod
+    def no_rindas(cls, rinda):
+        """Izveido objektu no CSV rindas: BT101,Riga,180"""
+        lauki = rinda.strip().split(",")
+        return cls(lauki[0], lauki[1], int(lauki[2]))
+
+    @classmethod
+    def tuksa(cls):
+        """Izveido tukšu lidojumu ar noklusējuma vērtībām."""
+        return cls("---", "nav noteikts")
 
 
+
+import json
+logs = tk.Tk()
+logs.title("Lidojums")
+logs.geometry("500x500")
+opt = StringVar()
+opt.set("SM-64")
+hi = tk.Label(logs, textvariable=opt).pack()
+flights = [Lidojums("SM-64", "Japan"),Lidojums("FM-504", "Netherlands"), Lidojums("2234", "Valencia"), Lidojums("24601", "France", vietu_skaits=150)]
+f = IntVar()
+f.set(0)
+flightnames = []
+for li in flights:
+    flightnames.append(f"{li.numurs}")
+def saglabat_lidojumus():
+    with open("lidojums.json", "w", encoding="utf-8") as datne:
+        json.dump([p.uz_vardnicu() for p in uptodateflights], datne, ensure_ascii=False, indent=2)
+    free.set(f"{fly().rezervetas_vietas}/{fly().vietu_skaits}")
+
+
+with open("lidojums.json", "r", encoding="utf-8") as datne:
+    uptodateflights = [Lidojums.no_vardnicas(d) for d in json.load(datne)]
+
+flymenu = tk.OptionMenu(logs, opt, *flightnames).pack() 
+def fly():  
+    for fly in uptodateflights:
+        if opt.get() == fly.numurs:
+            # f.set(flights.index(fly))
+            return uptodateflights[uptodateflights.index(fly)]
+    free.set(f"{fly().rezervetas_vietas}/{fly().vietu_skaits}")
+f_darits = Button(logs, text="izvēlēties lidojumu", command=fly).pack()
+bvtext = StringVar()
+try:
+    def liktvietas():
+        lid = fly()
+        try:
+            x = int(rezer.get())
+            if x > 0:
+                lid.rezervet(x)
+            else:
+                bvtext.set("Ja vēlies atcelt, izmanto \"atcelt!\" pogu ar pozitīvi ievadītu skaitli.")
+        except:
+            bvtext.set("Nē.")
+        rezer.delete(0, tk.END)
+        saglabat_lidojumus()
+    def atliktvietas():
+        lid = fly()
+        try:
+            x = int(rezer.get())
+            if x > 0:
+                lid.atcelt(x)
+            else:
+                bvtext.set("Ja vēlies rezervēt, izmanto \"rezervēt!\" pogu ar pozitīvi ievadītu skaitli.")
+        except:
+            bvtext.set("Nē.")
+        rezer.delete(0, tk.END)
+        saglabat_lidojumus()
+    def raditbrivasvietas():
+        lid = fly()
+        bvtext.set(f"Ir {lid.brivas_vietas()} brīvas vietas.")
+        free.set(f"{fly().rezervetas_vietas}/{fly().vietu_skaits}")
+    rezer = tk.Entry(logs, cursor="star")
+    rezer.pack()
+    r_darits = Button(logs, text="rezervēt!", command=liktvietas, cursor="star")
+    r_darits.pack()
+    a_darits = Button(logs, text="atcelt!", command=atliktvietas, cursor="cross").pack()
+    brivasvietaspoga = Button(logs, text="Rādīt brīvās vietas", command=raditbrivasvietas, cursor="man").pack()
+    bv= tk.Label(logs, textvariable = bvtext)
+    bv.pack()
+    free = StringVar()
+    free.set(f"{fly().rezervetas_vietas}/{fly().vietu_skaits}")
+    freesee = tk.Label(logs, textvariable = free).pack()
+except:
+    bvtext.set("Izvēvies lidojumu.")
+logs.mainloop()
 
 
 # 65. Visai validācijai jāpaliek klasē; saskarne tikai rāda rezultātu.
@@ -842,9 +1076,34 @@ for  file in getAllFiles(ue):
 
 # 70. Pievieno savai klasei metodi uzvardnicu() un klases metodi novardnicas().
 
+# class Prece:
+#     def __init__(self, nosaukums, cena):
+#         self.nosaukums = nosaukums
+#         self.cena = cena
+
+#     def uz_vardnicu(self):
+#         return {"nosaukums": self.nosaukums, "cena": self.cena}
+
+#     @classmethod
+#     def no_vardnicas(cls, dati):
+#         return cls(dati["nosaukums"], dati["cena"])
 
 
 
+
+# preces = [Prece("Piens", 1.09), Prece("Maize", 2.45)]
+
+# with open("preces.json", "w", encoding="utf-8") as datne:
+#     json.dump([p.uz_vardnicu() for p in preces], datne, ensure_ascii=False, indent=2)
+
+
+# with open("preces.json", "r", encoding="utf-8") as datne:
+#     atjaunotas = [Prece.no_vardnicas(d) for d in json.load(datne)]
+
+# print(atjaunotas[0].nosaukums)
+# print(atjaunotas[0].cena)
+# print(atjaunotas[1].nosaukums)
+# print(atjaunotas[1].cena)
 # 71. Saglabā objektu sarakstu JSON datnē un ielasi to atpakaļ.
 
 
